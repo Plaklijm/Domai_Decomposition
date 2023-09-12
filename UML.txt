@@ -1,0 +1,20 @@
+@startuml
+
+[Player] as player
+[PlayerMovement] as mov
+[State Machine] as fsm
+[PlayerAbilities] as ability
+[PlayerInput] as input
+(Interact System) as interI
+(Gun System) as gun
+(Rune/Suit Upgrade System) as runes
+
+
+player --> mov
+fsm --> ability
+input -right--> player : Recieve
+interI ..> player
+gun ..> player
+mov --> fsm
+runes -right--> mov
+@enduml
