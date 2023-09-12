@@ -1,20 +1,40 @@
 @startuml
 
-[Player] as player
-[PlayerMovement] as mov
-[State Machine] as fsm
-[PlayerAbilities] as ability
-[PlayerInput] as input
-(Interact System) as interI
-(Gun System) as gun
-(Rune/Suit Upgrade System) as runes
+object Entity
+object Player
+object Camera
+object PlayerStats
+object "PlayerMovementComponent" as mov
+object "AnimationController" as anim
+object "Finite State Machine" as fsm
+object StateHandler
+object States
+object PlayerAbilities
+PlayerAbilities : Double Jump
+PlayerAbilities : Ledge Grab
+PlayerAbilities : Walk
+object PlayerInput
+object "InteractSystem" as inter
+object GunSystem
+object "Rune/SuitUpgradeSystem" as runes
 
+diamond dia
+diamond dia2
 
-player --> mov
-fsm --> ability
-input -right--> player : Recieve
-interI ..> player
-gun ..> player
+Player -up--|> Entity
+Player --> mov
+Player --> anim
+Player --> Camera
+PlayerStats --> mov
+runes --> PlayerStats
+PlayerInput --> Player : Recieve
+inter ..> dia
+GunSystem ..> dia
+dia --> Player : Interfaces
 mov --> fsm
-runes -right--> mov
+fsm --> dia2
+dia2 -down-> StateHandler
+dia2 -down-> States
+States -right->PlayerAbilities
+
 @enduml
