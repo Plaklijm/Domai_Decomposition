@@ -1,20 +1,32 @@
 @startuml
-
 [Player] as player
 [PlayerMovement] as mov
 [State Machine] as fsm
 [PlayerAbilities] as ability
 [PlayerInput] as input
 (Interact System) as interI
-(Gun System) as gun
 (Rune/Suit Upgrade System) as runes
 
+[WeaponCarrier] as weapons
+[Weapon] as weapon
+[FireBehaviour] as fire1
+[ModFireBehaviour] as fire2
+(IDamageable) as Idmg
 
-player --> mov
+player -left-> mov
 fsm --> ability
-input -right--> player : Recieve
+input --> player : Recieve
 interI ..> player
-gun ..> player
 mov --> fsm
-runes -right--> mov
+runes --> mov
+
+player -right-> weapons
+runes --> weapons
+weapons -down-> weapon
+weapon -down-> fire1
+weapon -down-> fire2
+weapons -> fire2
+fire1 -down-> Idmg
+fire2 -down-> Idmg
+weapon -> mov
 @enduml
