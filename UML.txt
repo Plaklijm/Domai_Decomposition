@@ -1,19 +1,31 @@
 @startuml
 
 object Entity
-object Player
-object Camera
-object PlayerStats
-object "PlayerMovementComponent" as mov
-object "AnimationController" as anim
-object "Finite State Machine" as fsm
-object StateHandler
-object States
-object PlayerAbilities
-PlayerAbilities : Double Jump
-PlayerAbilities : Ledge Grab
-PlayerAbilities : Walk
-object PlayerInput
+
+package PlayerObj {
+  object Player
+  object Camera
+  object PlayerStats
+  object "PlayerMovementComponent" as mov
+  object "AnimationController" as anim
+  object PlayerInput
+}
+
+package StateMachine {
+  object "Finite State Machine" as fsm
+  object StateHandler
+  object States
+  object PlayerAbilities
+  PlayerAbilities : Double Jump
+  PlayerAbilities : Ledge Grab
+  PlayerAbilities : Sprint (default)
+  PlayerAbilities : Walk
+  PlayerAbilities : Melee
+  PlayerAbilities : GloryKill
+  diamond dia2
+
+}
+
 object "InteractSystem" as inter
 object "Rune/SuitUpgradeSystem" as runes
 
@@ -25,25 +37,24 @@ object "FireBehaviour" as fire1
 object "AltFireBehaviour" as fire2
 object "TracerVFX" as tracer
 object "Projectile" as proj
+diamond dia
 }
 object "IDamageable" as Idmg
 
 object UI
 object WeaponUI
 
-diamond dia
-diamond dia2
+
 
 Player -up--|> Entity
 Player --> mov
 Player --> anim
 Player -left-> Camera
-PlayerStats --> mov
-runes --> PlayerStats
-PlayerInput --> Player : Recieve
-inter ..> dia
-dia --> Player : Interfaces
-mov --> fsm
+PlayerStats --> Player
+runes ...> PlayerStats
+PlayerInput --> Player
+inter ...> Player
+mov --* fsm
 fsm --> dia2
 dia2 -down-> StateHandler
 dia2 -down-> States
@@ -51,20 +62,21 @@ States -right-> PlayerAbilities
 
 Player -right-> weapons
 UI -left-> WeaponUI
-PlayerStats ---> weapons
 weapons -down-> wpn
-weapons -right-> WeaponUI
+weapons --> WeaponUI
 wpn -up-> WeaponUI
 wpn -down--> fire1
 fire1 --> tracer
-fire1 -down-> mov
-wpn -right-> fire2
+fire1 -> mov : Knockback
+wpn -right--> fire2
 fire2 -> proj
 fire1 --> Idmg
 proj --> Idmg
-proj -> Viewmodel
-tracer -> Viewmodel
+proj --> dia
+tracer --> dia
+ 
+wpn -down-> dia
 
-wpn -down-> Viewmodel
+dia -down-> Viewmodel
 
 @enduml
