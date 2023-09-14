@@ -15,8 +15,21 @@ PlayerAbilities : Ledge Grab
 PlayerAbilities : Walk
 object PlayerInput
 object "InteractSystem" as inter
-object GunSystem
 object "Rune/SuitUpgradeSystem" as runes
+
+object "WeaponCarrier" as weapons
+package ExampleWeapon {
+object "Weapon" as wpn
+object Viewmodel
+object "FireBehaviour" as fire1
+object "AltFireBehaviour" as fire2
+object "TracerVFX" as tracer
+object "Projectile" as proj
+}
+object "IDamageable" as Idmg
+
+object UI
+object WeaponUI
 
 diamond dia
 diamond dia2
@@ -24,17 +37,34 @@ diamond dia2
 Player -up--|> Entity
 Player --> mov
 Player --> anim
-Player --> Camera
+Player -left-> Camera
 PlayerStats --> mov
 runes --> PlayerStats
 PlayerInput --> Player : Recieve
 inter ..> dia
-GunSystem ..> dia
 dia --> Player : Interfaces
 mov --> fsm
 fsm --> dia2
 dia2 -down-> StateHandler
 dia2 -down-> States
-States -right->PlayerAbilities
+States -right-> PlayerAbilities
+
+Player -right-> weapons
+UI -left-> WeaponUI
+PlayerStats ---> weapons
+weapons -down-> wpn
+weapons -right-> WeaponUI
+wpn -up-> WeaponUI
+wpn -down--> fire1
+fire1 --> tracer
+fire1 -down-> mov
+wpn -right-> fire2
+fire2 -> proj
+fire1 --> Idmg
+proj --> Idmg
+proj -> Viewmodel
+tracer -> Viewmodel
+
+wpn -down-> Viewmodel
 
 @enduml
