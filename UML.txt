@@ -9,6 +9,7 @@ package PlayerObj {
   object "PlayerMovementComponent" as mov
   object "AnimationController" as anim
   object PlayerInput
+  object "WeaponCarrier" as weapons
 }
 
 package StateMachine {
@@ -29,16 +30,19 @@ package StateMachine {
 object "InteractSystem" as inter
 object "Rune/SuitUpgradeSystem" as runes
 
-object "WeaponCarrier" as weapons
+weapons : CurrentWeapon
+weapons : FoundWeapons
+weapons : FoundWeaponMods
 package ExampleWeapon {
-object "Weapon" as wpn
-object Viewmodel
-object "FireBehaviour" as fire1
-object "AltFireBehaviour" as fire2
-object "TracerVFX" as tracer
-object "Projectile" as proj
-diamond dia
+  object "Weapon" as wpn
+  object Viewmodel
+  object "FireBehaviour" as fire1
+  object "ModFireBehaviour" as fire2
+  object "TracerVFX" as tracer
+  object "Projectile" as proj
+  diamond dia
 }
+diamond dmgDia
 object "IDamageable" as Idmg
 
 object UI
@@ -49,7 +53,7 @@ object WeaponUI
 Player -up--|> Entity
 Player --> mov
 Player --> anim
-Player -left-> Camera
+Player -right-> Camera
 PlayerStats --> Player
 runes ...> PlayerStats
 PlayerInput --> Player
@@ -60,18 +64,19 @@ dia2 -down-> StateHandler
 dia2 -down-> States
 States -right-> PlayerAbilities
 
-Player -right-> weapons
-UI -left-> WeaponUI
+Player -left-> weapons
+UI -down-> WeaponUI
 weapons -down-> wpn
 weapons --> WeaponUI
 wpn -up-> WeaponUI
-wpn -down--> fire1
+wpn -down-> fire1
 fire1 --> tracer
 fire1 -> mov : Knockback
-wpn -right--> fire2
+wpn -left-> fire2
 fire2 -> proj
-fire1 --> Idmg
-proj --> Idmg
+fire1 -left-> dmgDia
+proj -left--> dmgDia
+dmgDia -left->Idmg
 proj --> dia
 tracer --> dia
  
