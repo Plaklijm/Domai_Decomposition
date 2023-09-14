@@ -1,32 +1,82 @@
 @startuml
-[Player] as player
-[PlayerMovement] as mov
-[State Machine] as fsm
-[PlayerAbilities] as ability
-[PlayerInput] as input
-(Interact System) as interI
-(Rune/Suit Upgrade System) as runes
 
-[WeaponCarrier] as weapons
-[Weapon] as weapon
-[FireBehaviour] as fire1
-[ModFireBehaviour] as fire2
-(IDamageable) as Idmg
+object Entity
 
-player -left-> mov
-fsm --> ability
-input --> player : Recieve
-interI ..> player
-mov --> fsm
-runes --> mov
+package PlayerObj {
+  object Player
+  object Camera
+  object PlayerStats
+  object "PlayerMovementComponent" as mov
+  object "AnimationController" as anim
+  object PlayerInput
+}
 
-player -right-> weapons
-runes --> weapons
-weapons -down-> weapon
-weapon -down-> fire1
-weapon -down-> fire2
-weapons -> fire2
-fire1 -down-> Idmg
-fire2 -down-> Idmg
-weapon -> mov
+package StateMachine {
+  object "Finite State Machine" as fsm
+  object StateHandler
+  object States
+  object PlayerAbilities
+  PlayerAbilities : Double Jump
+  PlayerAbilities : Ledge Grab
+  PlayerAbilities : Sprint (default)
+  PlayerAbilities : Walk
+  PlayerAbilities : Melee
+  PlayerAbilities : GloryKill
+  diamond dia2
+
+}
+
+object "InteractSystem" as inter
+object "Rune/SuitUpgradeSystem" as runes
+
+object "WeaponCarrier" as weapons
+package ExampleWeapon {
+object "Weapon" as wpn
+object Viewmodel
+object "FireBehaviour" as fire1
+object "AltFireBehaviour" as fire2
+object "TracerVFX" as tracer
+object "Projectile" as proj
+diamond dia
+}
+object "IDamageable" as Idmg
+
+object UI
+object WeaponUI
+
+
+
+Player -up--|> Entity
+Player --> mov
+Player --> anim
+Player -left-> Camera
+PlayerStats --> Player
+runes ...> PlayerStats
+PlayerInput --> Player
+inter ...> Player
+mov --* fsm
+fsm --> dia2
+dia2 -down-> StateHandler
+dia2 -down-> States
+States -right-> PlayerAbilities
+
+Player -right-> weapons
+UI -left-> WeaponUI
+weapons -down-> wpn
+weapons --> WeaponUI
+wpn -up-> WeaponUI
+wpn -down--> fire1
+fire1 --> tracer
+fire1 -> mov : Knockback
+wpn -right--> fire2
+fire2 -> proj
+fire1 --> Idmg
+proj --> Idmg
+proj --> dia
+tracer --> dia
+ 
+wpn -down-> dia
+
+dia -down-> Viewmodel
+
 @enduml
